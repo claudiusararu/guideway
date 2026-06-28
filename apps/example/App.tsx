@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, StatusBar } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { TourProvider, useTour, useTourTarget, type TourDefinition } from 'guideway';
 
 const tours: TourDefinition[] = [
@@ -70,10 +63,12 @@ function Home() {
 
 export default function App() {
   return (
-    <TourProvider tours={tours}>
-      <StatusBar barStyle="dark-content" />
-      <Home />
-    </TourProvider>
+    <SafeAreaProvider>
+      <TourProvider tours={tours}>
+        <StatusBar barStyle="dark-content" />
+        <Home />
+      </TourProvider>
+    </SafeAreaProvider>
   );
 }
 
