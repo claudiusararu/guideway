@@ -1,38 +1,60 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, type LayoutChangeEvent } from 'react-native';
+import { resolveTooltipPosition } from './position';
 import type { ResolvedTheme } from '../context';
-import type { TargetRect, TooltipRenderProps, TooltipComponent } from '../types';
+import type {
+  TargetRect,
+  TooltipRenderProps,
+  TooltipComponent,
+  Insets,
+  Size,
+} from '../types';
 
 interface TooltipProps {
   renderProps: TooltipRenderProps;
   rect: TargetRect;
   theme: ResolvedTheme;
-  screen: { width: number; height: number };
+  screen: Size;
+  insets: Insets;
   custom?: TooltipComponent;
 }
 
-const GAP = 12;
-const MARGIN = 16;
-
 /**
- * Positions the tooltip near the target. Week 1: placed below the target (above if
- * there is no room), left-aligned and clamped to the screen. Week 2 swaps in
- * floating-ui for full flip/shift + an arrow.
+ * Renders the tooltip near the target. It measures its own size on first layout,
+ * then runs the pure positioning resolver (flip / shift / clamp to the safe area).
+ * Hidden until measured to avoid a position flash. Keyed by step id upstream, so a
+ * fresh measure happens per step.
  */
-export function Tooltip({ renderProps, rect, theme, screen, custom }: TooltipProps) {
+export function Tooltip({ renderProps, rect, theme, screen, insets, custom }: TooltipProps) {
+  const [size, setSize] = useState<Size | null>(null);
   const Custom = renderProps.step.render ?? custom;
-  const estimatedHeight = 150;
-  const below = rect.y + rect.height + GAP;
-  const placeAbove = below + estimatedHeight > screen.height - MARGIN;
-  const top = placeAbove
-    ? Math.max(MARGIN, rect.y - estimatedHeight - GAP)
-    : below;
-  const left = clamp(rect.x, MARGIN, screen.width - theme.tooltip.maxWidth - MARGIN);
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    if (!size || Math.abs(size.width - width) > 1 || Math.abs(size.height - height) > 1) {
+      setSize({ width, height });
+    }
+  };
+
+  const pos = size
+    ? resolveTooltipPosition({
+        target: rect,
+        tooltip: size,
+        screen,
+        insets,
+        preferred: renderProps.step.placement ?? 'bottom',
+      })
+    : null;
 
   return (
     <View
-      style={[styles.anchor, { top, left, maxWidth: theme.tooltip.maxWidth }]}
+      onLayout={onLayout}
       pointerEvents="box-none"
+      style={[
+        styles.anchor,
+        { maxWidth: theme.tooltip.maxWidth },
+        pos ? { top: pos.top, left: pos.left, opacity: 1 } : { top: 0, left: 0, opacity: 0 },
+      ]}
     >
       {Custom ? <Custom {...renderProps} /> : <BuiltInTooltip {...renderProps} theme={theme} />}
     </View>
@@ -78,10 +100,6 @@ function BuiltInTooltip(props: TooltipRenderProps & { theme: ResolvedTheme }) {
       </View>
     </View>
   );
-}
-
-function clamp(n: number, min: number, max: number): number {
-  return Math.max(min, Math.min(Math.max(min, max), n));
 }
 
 const styles = StyleSheet.create({

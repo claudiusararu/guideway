@@ -7,6 +7,7 @@ import type {
   TargetRect,
   ResolvedCutout,
   TooltipComponent,
+  Insets,
 } from './types';
 
 export interface SpotlightShared {
@@ -40,6 +41,7 @@ export interface TourContextValue {
   theme: ResolvedTheme;
   defaultCutout: ResolvedCutout;
   tooltipComponent?: TooltipComponent;
+  insets: Insets;
   screen: { width: number; height: number };
 }
 

@@ -22,6 +22,7 @@ import type {
   TargetRect,
   TargetRegistry,
   TooltipComponent,
+  Insets,
 } from './types';
 
 const DEFAULT_CUTOUT: ResolvedCutout = { shape: 'rounded', padding: 8, radius: 12 };
@@ -51,6 +52,9 @@ export interface TourProviderProps {
   defaultCutout?: Cutout;
   /** Global custom tooltip (step.render takes precedence). */
   tooltipComponent?: TooltipComponent;
+  /** Safe-area insets so tooltips avoid the notch / home indicator.
+   *  Pass `useSafeAreaInsets()` from react-native-safe-area-context. */
+  insets?: Insets;
 }
 
 const ENTER = { duration: 200 };
@@ -62,6 +66,7 @@ export function TourProvider({
   theme,
   defaultCutout,
   tooltipComponent,
+  insets,
 }: TourProviderProps) {
   const [state, dispatch] = useReducer(reducer, tours, initialState);
   const registry = useRef<TargetRegistry>(new Map());
@@ -161,9 +166,10 @@ export function TourProvider({
       theme: resolvedTheme,
       defaultCutout: resolvedCutout,
       tooltipComponent,
+      insets: insets ?? { top: 0, right: 0, bottom: 0, left: 0 },
       screen: { width, height },
     }),
-    [state, controller, currentRect, shared, resolvedTheme, resolvedCutout, tooltipComponent, width, height]
+    [state, controller, currentRect, shared, resolvedTheme, resolvedCutout, tooltipComponent, insets, width, height]
   );
 
   return (

@@ -12,6 +12,9 @@ export type {
   TooltipRenderProps,
   TooltipComponent,
   UseTourTargetOptions,
+  Placement,
+  PreferredPlacement,
+  Insets,
 } from './types';
 
 export type { ResolvedTheme } from './context';

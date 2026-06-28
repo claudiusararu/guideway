@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, StatusBar } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TourProvider, useTour, useTourTarget, type TourDefinition } from 'guideway';
 
 const tours: TourDefinition[] = [
@@ -61,13 +61,20 @@ function Home() {
   );
 }
 
+function Root() {
+  const insets = useSafeAreaInsets();
+  return (
+    <TourProvider tours={tours} insets={insets}>
+      <StatusBar barStyle="dark-content" />
+      <Home />
+    </TourProvider>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
-      <TourProvider tours={tours}>
-        <StatusBar barStyle="dark-content" />
-        <Home />
-      </TourProvider>
+      <Root />
     </SafeAreaProvider>
   );
 }

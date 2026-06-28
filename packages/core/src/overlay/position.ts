@@ -1,19 +1,6 @@
-import type { TargetRect } from '../types';
+import type { TargetRect, Placement, PreferredPlacement, Insets, Size } from '../types';
 
-export type Placement = 'top' | 'bottom' | 'left' | 'right';
-export type PreferredPlacement = Placement | 'auto';
-
-export interface Insets {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
-}
-
-export interface Size {
-  width: number;
-  height: number;
-}
+export type { Placement, PreferredPlacement, Insets, Size } from '../types';
 
 export interface ResolvedPosition {
   top: number;

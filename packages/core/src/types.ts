@@ -26,6 +26,21 @@ export interface ResolvedCutout {
   radius: number;
 }
 
+export type Placement = 'top' | 'bottom' | 'left' | 'right';
+export type PreferredPlacement = Placement | 'auto';
+
+export interface Insets {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export interface Size {
+  width: number;
+  height: number;
+}
+
 /** Props handed to a custom tooltip component. This is the entire render contract. */
 export interface TooltipRenderProps {
   step: StepDefinition;
@@ -52,6 +67,8 @@ export interface StepDefinition {
   render?: TooltipComponent;
   /** Hole appearance for this step; merged over provider defaults. */
   cutout?: Cutout;
+  /** Preferred tooltip side; 'auto' lets the resolver choose. Default 'bottom'. */
+  placement?: PreferredPlacement;
 }
 
 export interface TourDefinition {

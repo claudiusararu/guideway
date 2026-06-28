@@ -12,7 +12,7 @@ import type { TooltipRenderProps } from './types';
  * floats above the content without a separate native window.
  */
 export function TourHost() {
-  const { state, controller, currentRect, shared, theme, tooltipComponent, screen } =
+  const { state, controller, currentRect, shared, theme, tooltipComponent, insets, screen } =
     useTourContext();
 
   if (state.status !== 'active') return null;
@@ -39,10 +39,12 @@ export function TourHost() {
       <Pressable style={StyleSheet.absoluteFill} onPress={controller.next} />
       {currentRect ? (
         <Tooltip
+          key={step.id}
           renderProps={renderProps}
           rect={currentRect}
           theme={theme}
           screen={screen}
+          insets={insets}
           custom={tooltipComponent}
         />
       ) : null}
