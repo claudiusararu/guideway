@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { SharedValue } from 'react-native-reanimated';
 import type { TourState } from './engine/machine';
+import type { GuidewayTheme } from './theme';
 import type {
   TourController,
   TargetRegistry,
@@ -19,18 +20,8 @@ export interface SpotlightShared {
   opacity: SharedValue<number>;
 }
 
-export interface ResolvedTheme {
-  overlayColor: string;
-  accent: string;
-  tooltip: {
-    backgroundColor: string;
-    textColor: string;
-    titleColor: string;
-    borderRadius: number;
-    padding: number;
-    maxWidth: number;
-  };
-}
+/** @deprecated Use `GuidewayTheme`. Kept as an alias for back-compat. */
+export type ResolvedTheme = GuidewayTheme;
 
 export interface TourContextValue {
   state: TourState;

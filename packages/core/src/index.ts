@@ -17,6 +17,8 @@ export type {
   Insets,
 } from './types';
 
+export { lightTheme, darkTheme, resolveTheme } from './theme';
+export type { GuidewayTheme, ColorScheme, ThemeOverride } from './theme';
 export type { ResolvedTheme } from './context';
 
 // Lower-level engine, exposed for advanced use + testing.

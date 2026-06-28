@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { useColorScheme, useWindowDimensions } from 'react-native';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import {
   reducer,
@@ -13,6 +13,7 @@ import {
 import { measureTarget, padRect } from './measure';
 import { radiusForShape } from './overlay/paths';
 import { TourContext, type ResolvedTheme } from './context';
+import { resolveTheme, type ThemeOverride } from './theme';
 import { TourHost } from './TourHost';
 import type {
   TourDefinition,
@@ -27,28 +28,14 @@ import type {
 
 const DEFAULT_CUTOUT: ResolvedCutout = { shape: 'rounded', padding: 8, radius: 12 };
 
-const DEFAULT_THEME: ResolvedTheme = {
-  overlayColor: 'rgba(10,12,20,0.78)',
-  accent: '#2347ff',
-  tooltip: {
-    backgroundColor: '#ffffff',
-    textColor: '#1f2430',
-    titleColor: '#0b0d12',
-    borderRadius: 14,
-    padding: 16,
-    maxWidth: 320,
-  },
-};
-
-type ThemeInput = Partial<Omit<ResolvedTheme, 'tooltip'>> & {
-  tooltip?: Partial<ResolvedTheme['tooltip']>;
-};
-
 export interface TourProviderProps {
   children: React.ReactNode;
   /** Register tours up front (you can also register at runtime later). */
   tours?: TourDefinition[];
-  theme?: ThemeInput;
+  /** Partial theme, deep-merged over the chosen light/dark base. */
+  theme?: ThemeOverride;
+  /** 'light' | 'dark' | 'auto' (follows the device). Default 'light'. */
+  colorScheme?: 'light' | 'dark' | 'auto';
   defaultCutout?: Cutout;
   /** Global custom tooltip (step.render takes precedence). */
   tooltipComponent?: TooltipComponent;
@@ -64,6 +51,7 @@ export function TourProvider({
   children,
   tours = [],
   theme,
+  colorScheme = 'light',
   defaultCutout,
   tooltipComponent,
   insets,
@@ -72,6 +60,7 @@ export function TourProvider({
   const registry = useRef<TargetRegistry>(new Map());
   const [currentRect, setCurrentRect] = useState<TargetRect | null>(null);
   const { width, height } = useWindowDimensions();
+  const systemScheme = useColorScheme();
 
   const x = useSharedValue(0);
   const y = useSharedValue(0);
@@ -86,14 +75,8 @@ export function TourProvider({
     [defaultCutout]
   );
 
-  const resolvedTheme = useMemo<ResolvedTheme>(
-    () => ({
-      ...DEFAULT_THEME,
-      ...theme,
-      tooltip: { ...DEFAULT_THEME.tooltip, ...theme?.tooltip },
-    }),
-    [theme]
-  );
+  const scheme = colorScheme === 'auto' ? (systemScheme === 'dark' ? 'dark' : 'light') : colorScheme;
+  const resolvedTheme = useMemo<ResolvedTheme>(() => resolveTheme(scheme, theme), [scheme, theme]);
 
   // Measure the active step's target, then animate the spotlight to it.
   useEffect(() => {

@@ -64,6 +64,8 @@ export function Tooltip({ renderProps, rect, theme, screen, insets, custom }: To
 function BuiltInTooltip(props: TooltipRenderProps & { theme: ResolvedTheme }) {
   const { step, stepIndex, totalSteps, isFirst, isLast, next, back, skip, theme } = props;
   const t = theme.tooltip;
+  const font = t.fontFamily ? { fontFamily: t.fontFamily } : null;
+  const L = theme.labels;
   return (
     <View
       style={[
@@ -71,31 +73,33 @@ function BuiltInTooltip(props: TooltipRenderProps & { theme: ResolvedTheme }) {
         { backgroundColor: t.backgroundColor, borderRadius: t.borderRadius, padding: t.padding },
       ]}
     >
-      {step.title ? <Text style={[styles.title, { color: t.titleColor }]}>{step.title}</Text> : null}
+      {step.title ? (
+        <Text style={[styles.title, font, { color: t.titleColor }]}>{step.title}</Text>
+      ) : null}
       {typeof step.body === 'string' ? (
-        <Text style={[styles.body, { color: t.textColor }]}>{step.body}</Text>
+        <Text style={[styles.body, font, { color: t.textColor }]}>{step.body}</Text>
       ) : (
         step.body ?? null
       )}
 
       <View style={styles.row}>
         <Pressable hitSlop={8} onPress={skip}>
-          <Text style={[styles.skip, { color: t.textColor }]}>Skip</Text>
+          <Text style={[styles.skip, font, { color: t.textColor }]}>{L.skip}</Text>
         </Pressable>
 
         <View style={styles.spacer} />
-        <Text style={[styles.count, { color: t.textColor }]}>
+        <Text style={[styles.count, font, { color: t.textColor }]}>
           {stepIndex + 1} / {totalSteps}
         </Text>
 
         {!isFirst ? (
           <Pressable hitSlop={8} onPress={back} style={styles.ghost}>
-            <Text style={[styles.ghostText, { color: t.titleColor }]}>Back</Text>
+            <Text style={[styles.ghostText, font, { color: t.titleColor }]}>{L.back}</Text>
           </Pressable>
         ) : null}
 
         <Pressable hitSlop={8} onPress={next} style={[styles.primary, { backgroundColor: theme.accent }]}>
-          <Text style={styles.primaryText}>{isLast ? 'Done' : 'Next'}</Text>
+          <Text style={[styles.primaryText, font]}>{isLast ? L.done : L.next}</Text>
         </Pressable>
       </View>
     </View>
