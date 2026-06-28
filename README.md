@@ -10,9 +10,9 @@ Built for the New Architecture from day one: Fabric-safe measurement, a Reanimat
 spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
 in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
-> Early release (`0.1.0`). The core engine, measurement, and the animated spotlight are in
-> place and tested, and it runs on device. Floating-ui popovers, auto-scroll, FlatList,
-> persistence, and a docs site land over the coming releases.
+> Early but usable. Spotlight tours with smart tooltip positioning - flips and shifts to
+> stay on-screen, safe-area aware - work today on real devices. Auto-scroll to off-screen
+> targets, FlatList support, persistence, and a docs site are on the way.
 
 MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
 live separately.
@@ -67,6 +67,9 @@ const tours = [{
 
 No HOCs, no wrapper views that shift your layout, no manual step ordering. Tours are plain
 data, so remote-config and A/B-tested onboarding come for free.
+
+> Tip: pass `insets={useSafeAreaInsets()}` (from `react-native-safe-area-context`) to
+> `TourProvider` so tooltips stay clear of the notch and home indicator.
 
 ## Repo layout (pnpm monorepo)
 
