@@ -2,18 +2,38 @@
 
 **Product tours, coachmarks, and spotlight onboarding for React Native and Expo.**
 
+[![npm](https://img.shields.io/npm/v/guideway.svg)](https://www.npmjs.com/package/guideway)
+[![CI](https://github.com/claudiusararu/guideway/actions/workflows/ci.yml/badge.svg)](https://github.com/claudiusararu/guideway/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/guideway.svg)](./LICENSE)
+
 Built for the New Architecture from day one: Fabric-safe measurement, a Reanimated
-spotlight that animates on the UI thread, hook-first API, zero native config (works in
-Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
+spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
+in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
-> Status: early development (Week 1 skeleton). The core engine, measurement, and the
-> animated spotlight are in place; auto-scroll, FlatList, persistence, and the docs site
-> land over the following weeks. Not yet published to npm.
+> Early release (`0.1.0`). The core engine, measurement, and the animated spotlight are in
+> place and tested, and it runs on device. Floating-ui popovers, auto-scroll, FlatList,
+> persistence, and a docs site land over the coming releases.
 
-MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens)
-will live separately.
+MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
+live separately.
 
-## Quick taste
+## Installation
+
+**Expo** (recommended - aligns versions to your SDK):
+
+```bash
+npx expo install guideway react-native-reanimated react-native-svg
+```
+
+**Bare React Native:**
+
+```bash
+npm install guideway react-native-reanimated react-native-svg
+```
+
+Guideway needs `react-native-reanimated` and `react-native-svg` as peers.
+
+## Usage
 
 ```tsx
 import { TourProvider, useTour, useTourTarget } from 'guideway';
@@ -45,8 +65,8 @@ const tours = [{
 <TourProvider tours={tours}><Screen /></TourProvider>
 ```
 
-No HOCs, no wrapper views that shift your layout, no manual step ordering. Tours are
-plain data, so remote-config and A/B-tested onboarding come for free.
+No HOCs, no wrapper views that shift your layout, no manual step ordering. Tours are plain
+data, so remote-config and A/B-tested onboarding come for free.
 
 ## Repo layout (pnpm monorepo)
 
