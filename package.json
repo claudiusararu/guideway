@@ -1,0 +1,17 @@
+{
+  "name": "guideway-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Guideway - product tours and coachmarks for React Native.",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "test": "pnpm --filter guideway test",
+    "test:coverage": "pnpm --filter guideway test -- --coverage --ci",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "build": "pnpm --filter guideway prepare",
+    "example": "pnpm --filter guideway-example start"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

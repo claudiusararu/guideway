@@ -1,0 +1,14 @@
+node_modules/
+lib/
+dist/
+coverage/
+
+# Expo / RN
+.expo/
+.expo-shared/
+apps/*/ios/
+apps/*/android/
+*.log
+
+.DS_Store
+.env
