@@ -1,0 +1,25 @@
+{
+  "name": "guideway-example",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android"
+  },
+  "dependencies": {
+    "expo": "~54.0.0",
+    "expo-status-bar": "~2.2.0",
+    "guideway": "workspace:*",
+    "react": "19.0.0",
+    "react-native": "0.81.0",
+    "react-native-reanimated": "~3.16.0",
+    "react-native-svg": "15.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "@types/react": "~19.0.0",
+    "typescript": "^5.6.0"
+  }
+}
