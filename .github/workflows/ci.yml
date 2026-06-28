@@ -16,4 +16,5 @@ jobs:
         with:
           node-version: 22
       - run: pnpm install --filter guideway --no-frozen-lockfile
+      - run: pnpm --filter guideway typecheck
       - run: pnpm --filter guideway test -- --coverage --ci
