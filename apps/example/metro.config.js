@@ -13,4 +13,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// Resolve workspace packages via their `react-native`/`source` field (src) instead of
+// the `exports` map, which points at the built lib/. This lets the example run the live
+// source from packages/core - no `bob build` needed on every change.
+config.resolver.unstable_enablePackageExports = false;
+
 module.exports = config;
