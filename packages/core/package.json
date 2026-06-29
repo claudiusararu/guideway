@@ -1,6 +1,6 @@
 {
   "name": "guideway",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Product tours, coachmarks, and spotlight onboarding for React Native and Expo. Fabric-first, Reanimated-powered, hook-first.",
   "keywords": [
     "react-native",
