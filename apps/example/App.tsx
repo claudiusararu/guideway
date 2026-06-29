@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, StatusBar } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TourProvider, useTour, useTourTarget, type TourDefinition } from 'guideway';
 
@@ -16,9 +16,15 @@ const tours: TourDefinition[] = [
       },
       {
         id: 'profile',
-        title: 'You are all set',
-        body: 'Your account and settings live here. Enjoy Guideway.',
+        title: 'Your account',
+        body: 'Your profile and sign-out live up here.',
         cutout: { shape: 'pill' },
+      },
+      {
+        id: 'settings',
+        title: 'Even off-screen',
+        body: 'This card was below the fold - the tour scrolled to it automatically.',
+        cutout: { shape: 'rounded' },
       },
     ],
   },
@@ -28,6 +34,8 @@ function Home() {
   const search = useTourTarget('search');
   const create = useTourTarget('create');
   const profile = useTourTarget('profile');
+  const scrollRef = useRef<ScrollView>(null);
+  const settings = useTourTarget('settings', { scrollRef });
   const { start, isActive } = useTour();
 
   return (
@@ -39,20 +47,31 @@ function Home() {
         </Pressable>
       </View>
 
-      <TextInput
-        ref={search}
-        placeholder="Search"
-        placeholderTextColor="#9aa0ad"
-        style={styles.search}
-      />
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
+        <TextInput
+          ref={search}
+          placeholder="Search"
+          placeholderTextColor="#9aa0ad"
+          style={styles.search}
+        />
 
-      <View style={styles.body}>
-        <Text style={styles.h1}>Welcome.</Text>
-        <Text style={styles.p}>A tiny demo of a Guideway product tour. Tap to start.</Text>
-        <Pressable onPress={() => start('main')} style={styles.cta} disabled={isActive}>
-          <Text style={styles.ctaText}>{isActive ? 'Tour running' : 'Show me around'}</Text>
-        </Pressable>
-      </View>
+        <View style={styles.body}>
+          <Text style={styles.h1}>Welcome.</Text>
+          <Text style={styles.p}>A tiny demo of a Guideway product tour. Tap to start.</Text>
+          <Pressable onPress={() => start('main')} style={styles.cta} disabled={isActive}>
+            <Text style={styles.ctaText}>{isActive ? 'Tour running' : 'Show me around'}</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.spacer}>
+          <Text style={styles.spacerHint}>↓ a long way down ↓</Text>
+        </View>
+
+        <View ref={settings} style={styles.settingsCard}>
+          <Text style={styles.settingsTitle}>Settings</Text>
+          <Text style={styles.settingsBody}>Off-screen until the tour scrolls here.</Text>
+        </View>
+      </ScrollView>
 
       <Pressable ref={create} style={styles.fab}>
         <Text style={styles.fabText}>+</Text>
@@ -98,6 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  scrollContent: { paddingBottom: 60 },
   search: {
     margin: 20,
     paddingHorizontal: 16,
@@ -121,6 +141,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   ctaText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  spacer: { height: 620, alignItems: 'center', justifyContent: 'center' },
+  spacerHint: { color: '#aeb4c0', fontSize: 14, fontWeight: '600' },
+  settingsCard: {
+    marginHorizontal: 20,
+    padding: 20,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e7e9ef',
+  },
+  settingsTitle: { fontSize: 20, fontWeight: '800', color: '#0b0d12', marginBottom: 6 },
+  settingsBody: { fontSize: 15, color: '#3a4051' },
   fab: {
     position: 'absolute',
     right: 24,

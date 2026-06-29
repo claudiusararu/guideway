@@ -25,11 +25,11 @@ export function useTourTarget(
       registry.delete(id);
       return;
     }
-    registry.set(id, ref);
+    registry.set(id, { ref, scrollRef: options.scrollRef, index: options.index });
     return () => {
-      if (registry.get(id) === ref) registry.delete(id);
+      if (registry.get(id)?.ref === ref) registry.delete(id);
     };
-  }, [id, enabled, registry]);
+  }, [id, enabled, registry, options.scrollRef, options.index]);
 
   return ref;
 }

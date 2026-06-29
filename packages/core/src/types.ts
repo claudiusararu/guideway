@@ -86,7 +86,7 @@ export interface TourDefinition {
 
 /** Options for marking a target. scrollRef/index land in Week 4-5. */
 export interface UseTourTargetOptions {
-  scrollRef?: RefObject<ScrollView | FlatList<unknown>>;
+  scrollRef?: RefObject<ScrollView | FlatList<unknown> | null>;
   index?: number;
   enabled?: boolean;
 }
@@ -105,5 +105,11 @@ export interface TourController {
   progress: number;
 }
 
-/** Internal: a registered target ref keyed by step id. */
-export type TargetRegistry = Map<string, RefObject<View | null>>;
+/** Internal: a registered target (its ref + optional scroll container) keyed by step id. */
+export interface TargetEntry {
+  ref: RefObject<View | null>;
+  scrollRef?: RefObject<ScrollView | FlatList<unknown> | null>;
+  index?: number;
+}
+
+export type TargetRegistry = Map<string, TargetEntry>;

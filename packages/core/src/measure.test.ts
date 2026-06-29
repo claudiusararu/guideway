@@ -1,6 +1,6 @@
 import type { RefObject } from 'react';
 import type { View } from 'react-native';
-import { measureTarget, padRect } from './measure';
+import { measureTarget, padRect, scrollTargetIntoView } from './measure';
 
 /** Build a fake host node whose measureInWindow resolves to a fixed rect. */
 function refTo(rect: { x: number; y: number; w: number; h: number } | null): RefObject<View | null> {
@@ -51,5 +51,47 @@ describe('padRect', () => {
       width: 176,
       height: 64,
     });
+  });
+});
+
+describe('scrollTargetIntoView', () => {
+  const targetAt = (top: number, height: number) =>
+    ({
+      current: {
+        measureLayout: (_node: unknown, ok: (x: number, y: number, w: number, h: number) => void) =>
+          ok(0, top, 100, height),
+      },
+    }) as unknown as RefObject<View | null>;
+
+  it('centers the target via ScrollView.scrollTo', async () => {
+    const scrollTo = jest.fn();
+    const scroller = { current: { getScrollableNode: () => 1, scrollTo } } as any;
+    await scrollTargetIntoView(targetAt(1000, 50), scroller, 800);
+    expect(scrollTo).toHaveBeenCalledWith({ y: 625, animated: true }); // 1000 + 25 - 400
+  });
+
+  it('uses scrollToOffset for a FlatList', async () => {
+    const scrollToOffset = jest.fn();
+    const scroller = { current: { scrollToOffset } } as any;
+    await scrollTargetIntoView(targetAt(1000, 50), scroller, 800);
+    expect(scrollToOffset).toHaveBeenCalledWith({ offset: 625, animated: true });
+  });
+
+  it('resolves without scrolling when the refs are empty', async () => {
+    await expect(
+      scrollTargetIntoView({ current: null }, { current: null } as any, 800)
+    ).resolves.toBeUndefined();
+  });
+
+  it('resolves when the target has no measureLayout', async () => {
+    await expect(
+      scrollTargetIntoView({ current: {} as View }, { current: {} } as any, 800)
+    ).resolves.toBeUndefined();
+  });
+
+  it('resolves and does not throw when the scroller exposes neither scroll method', async () => {
+    await expect(
+      scrollTargetIntoView(targetAt(1000, 50), { current: {} } as any, 800)
+    ).resolves.toBeUndefined();
   });
 });

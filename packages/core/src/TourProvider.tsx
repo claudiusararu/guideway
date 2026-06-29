@@ -10,7 +10,7 @@ import {
   activeStepCount,
   progress as progressOf,
 } from './engine/machine';
-import { measureTarget, padRect } from './measure';
+import { measureTarget, padRect, scrollTargetIntoView } from './measure';
 import { radiusForShape } from './overlay/paths';
 import { TourContext, type ResolvedTheme } from './context';
 import { resolveTheme, type ThemeOverride } from './theme';
@@ -51,6 +51,7 @@ export interface TourProviderProps {
 
 const ENTER = { duration: 200 };
 const MOVE = { duration: 260 };
+const SCROLL_SETTLE = 350; // ms to let an auto-scroll finish before measuring the target
 
 export function TourProvider({
   children,
@@ -103,8 +104,9 @@ export function TourProvider({
 
     const step = getCurrentStep(state);
     if (!step) return;
+    const entry = registry.current.get(step.id);
 
-    measureTarget(registry.current.get(step.id)).then((rect) => {
+    const reveal = (rect: TargetRect | null) => {
       if (cancelled || !rect) return;
       const cut = { ...resolvedCutout, ...step.cutout };
       const padded = padRect(rect, cut.padding);
@@ -119,10 +121,23 @@ export function TourProvider({
       h.value = withTiming(padded.height, cfg);
       r.value = withTiming(rad, cfg);
       opacity.value = withTiming(1, ENTER);
-    });
+    };
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (entry?.scrollRef?.current && entry.ref.current) {
+      // Off-screen target: scroll it into view, then measure once the scroll settles.
+      scrollTargetIntoView(entry.ref, entry.scrollRef, height).then(() => {
+        timer = setTimeout(() => {
+          if (!cancelled) measureTarget(entry.ref).then(reveal);
+        }, SCROLL_SETTLE);
+      });
+    } else {
+      measureTarget(entry?.ref).then(reveal);
+    }
 
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
     };
     // shared values are stable; re-run when the active step or screen changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
