@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useColorScheme, useWindowDimensions } from 'react-native';
+import { Keyboard, useColorScheme, useWindowDimensions } from 'react-native';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import {
   reducer,
@@ -84,6 +84,12 @@ export function TourProvider({
 
   const scheme = colorScheme === 'auto' ? (systemScheme === 'dark' ? 'dark' : 'light') : colorScheme;
   const resolvedTheme = useMemo<ResolvedTheme>(() => resolveTheme(scheme, theme), [scheme, theme]);
+
+  // Dismiss the keyboard on every step change, so a focused input from the previous
+  // step doesn't leave the keyboard covering the next tooltip/target.
+  useEffect(() => {
+    Keyboard.dismiss();
+  }, [state.status, state.activeTourId, state.stepIndex]);
 
   // Measure the active step's target, then animate the spotlight to it.
   useEffect(() => {
