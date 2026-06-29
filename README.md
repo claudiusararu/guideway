@@ -10,12 +10,21 @@ Built for the New Architecture from day one: Fabric-safe measurement, a Reanimat
 spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
 in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
-> Early but usable. Spotlight tours with smart tooltip positioning - flips and shifts to
-> stay on-screen, safe-area aware - work today on real devices. Auto-scroll to off-screen
-> targets, FlatList support, persistence, and a docs site are on the way.
+> Works today on real devices (iOS verified; Android shares the same Fabric-safe paths).
+> Persistence (show-once tours) and a docs site are next.
 
 MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
 live separately.
+
+## Features
+
+- **Spotlight tours** - a Reanimated cutout that glides between targets and reshapes (rect, rounded, circle, pill), entirely on the UI thread.
+- **Smart tooltips** - flip above/below and shift sideways to stay on-screen, safe-area aware, with per-step placement.
+- **Theming** - built-in light/dark themes, a `colorScheme` prop (`light`/`dark`/`auto`), and tokens for colors, radius, fonts, and button labels - or replace the tooltip entirely.
+- **Interactive spotlight** - tap straight through the hole to use the real element (`allowTargetInteraction`), configurable scrim taps, and the keyboard dismisses on every step.
+- **Auto-scroll** - off-screen targets scroll into view before highlighting, in `ScrollView` and `FlatList` (virtualized rows via `scrollToIndex`).
+- **Hook-first** - no HOCs, no wrapper views that shift your layout. Tours are plain data, so remote-config and A/B-tested onboarding come for free.
+- **New-Architecture native** - Fabric-safe measurement, zero native config, runs in Expo Go.
 
 ## Installation
 
@@ -70,6 +79,26 @@ data, so remote-config and A/B-tested onboarding come for free.
 
 > Tip: pass `insets={useSafeAreaInsets()}` (from `react-native-safe-area-context`) to
 > `TourProvider` so tooltips stay clear of the notch and home indicator.
+
+## Recipes
+
+```tsx
+// Dark mode that follows the device
+<TourProvider tours={tours} colorScheme="auto" />
+
+// Let users tap the highlighted element itself
+<TourProvider tours={tours} allowTargetInteraction />
+
+// Scroll an off-screen target into view first - pass its scroll container
+const listRef = useRef<FlatList>(null);
+const row = useTourTarget('row', { scrollRef: listRef, index: 29 });
+
+// Restyle anything
+<TourProvider tours={tours} theme={{ accent: '#ff5a5f', tooltip: { borderRadius: 20 } }} />
+```
+
+See [`apps/example`](./apps/example) for a working demo of every feature - theming, the
+interactive spotlight, and auto-scroll in both a ScrollView and a FlatList.
 
 ## Repo layout (pnpm monorepo)
 
