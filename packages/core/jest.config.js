@@ -10,6 +10,7 @@ module.exports = {
     './src/overlay/position.ts': { lines: 95, branches: 85, functions: 100 },
     './src/overlay/bands.ts': { lines: 95, branches: 85, functions: 100 },
     './src/theme.ts': { lines: 95, branches: 85, functions: 100 },
+    './src/scroll.ts': { lines: 95, branches: 85, functions: 100 },
     './src/measure.ts': { lines: 95, branches: 85, functions: 100 },
   },
 };
