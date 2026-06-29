@@ -6,12 +6,16 @@
 [![CI](https://github.com/claudiusararu/guideway/actions/workflows/ci.yml/badge.svg)](https://github.com/claudiusararu/guideway/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/guideway.svg)](./LICENSE)
 
+<p align="center">
+  <img src="media/guideway-demo.gif" alt="Guideway running a product tour on iOS" width="280" />
+</p>
+
 Built for the New Architecture from day one: Fabric-safe measurement, a Reanimated
 spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
 in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
 > Works today on real devices - verified on iOS and Android (edge-to-edge, gesture + button nav).
-> The core is feature-complete; a docs site is next.
+> The core is feature-complete, with full docs and a live demo at [guideway.dev](https://guideway.dev).
 
 MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
 live separately.

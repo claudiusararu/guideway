@@ -12,3 +12,4 @@ apps/*/android/
 
 .DS_Store
 .env
+/site/
