@@ -20,6 +20,8 @@ export type {
 
 export { lightTheme, darkTheme, resolveTheme } from './theme';
 export type { GuidewayTheme, ColorScheme, ThemeOverride } from './theme';
+export { clearSeen, seenKey } from './persistence';
+export type { TourStorage } from './persistence';
 export type { ResolvedTheme } from './context';
 
 // Lower-level engine, exposed for advanced use + testing.

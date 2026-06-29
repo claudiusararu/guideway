@@ -14,6 +14,7 @@ import { measureTarget, padRect, scrollTargetIntoView } from './measure';
 import { radiusForShape } from './overlay/paths';
 import { TourContext, type ResolvedTheme } from './context';
 import { resolveTheme, type ThemeOverride } from './theme';
+import { pickAutoStartTour, clearSeen, DEFAULT_SEEN_PREFIX, type TourStorage } from './persistence';
 import { TourHost } from './TourHost';
 import type {
   TourDefinition,
@@ -47,6 +48,10 @@ export interface TourProviderProps {
   /** Safe-area insets so tooltips avoid the notch / home indicator.
    *  Pass `useSafeAreaInsets()` from react-native-safe-area-context. */
   insets?: Insets;
+  /** Storage adapter (AsyncStorage/MMKV) enabling `showOnce` tours to auto-start once. */
+  storage?: TourStorage;
+  /** Key prefix for the persisted "seen" flags. Default 'guideway:seen:'. */
+  storageKeyPrefix?: string;
 }
 
 const ENTER = { duration: 200 };
@@ -63,6 +68,8 @@ export function TourProvider({
   overlayTapBehavior = 'next',
   allowTargetInteraction = false,
   insets,
+  storage,
+  storageKeyPrefix = DEFAULT_SEEN_PREFIX,
 }: TourProviderProps) {
   const [state, dispatch] = useReducer(reducer, tours, initialState);
   const registry = useRef<TargetRegistry>(new Map());
@@ -91,6 +98,20 @@ export function TourProvider({
   useEffect(() => {
     Keyboard.dismiss();
   }, [state.status, state.activeTourId, state.stepIndex]);
+
+  // Auto-start the first unseen showOnce tour (once per install) when storage is provided.
+  useEffect(() => {
+    if (!storage) return;
+    let cancelled = false;
+    pickAutoStartTour(tours, storage, storageKeyPrefix).then((id) => {
+      if (!cancelled && id) dispatch({ type: 'START', tourId: id });
+    });
+    return () => {
+      cancelled = true;
+    };
+    // Run once on mount; storage / tours / prefix are stable for this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Measure the active step's target, then animate the spotlight to it.
   useEffect(() => {
@@ -158,6 +179,9 @@ export function TourProvider({
         if (state.status === 'active') getActiveTour(state)?.onSkip?.(state.stepIndex);
         dispatch({ type: 'SKIP' });
       },
+      reset: (tourId: string) => {
+        if (storage) void clearSeen(tourId, storage, storageKeyPrefix);
+      },
       isActive: state.status === 'active',
       activeTourId: state.activeTourId,
       currentStep: getCurrentStep(state),
@@ -165,7 +189,7 @@ export function TourProvider({
       totalSteps: activeStepCount(state),
       progress: progressOf(state),
     }),
-    [state]
+    [state, storage, storageKeyPrefix]
   );
 
   const value = useMemo(

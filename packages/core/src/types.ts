@@ -97,6 +97,8 @@ export interface TourController {
   next: () => void;
   back: () => void;
   skip: () => void;
+  /** Clear a tour's "seen" flag so a showOnce tour can auto-start again. No-op without storage. */
+  reset: (tourId: string) => void;
   isActive: boolean;
   activeTourId: string | null;
   currentStep: StepDefinition | null;

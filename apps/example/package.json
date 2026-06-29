@@ -9,6 +9,7 @@
     "android": "expo run:android"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~56.0.12",
     "expo-status-bar": "~56.0.4",
     "guideway": "workspace:*",

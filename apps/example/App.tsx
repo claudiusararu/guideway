@@ -11,10 +11,12 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TourProvider, useTour, useTourTarget, type TourDefinition } from 'guideway';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const tours: TourDefinition[] = [
   {
     id: 'main',
+    showOnce: true,
     steps: [
       { id: 'search', title: 'Find anything', body: 'Search your whole library from one place.' },
       {
@@ -58,7 +60,7 @@ function Home({ onOpenList }: { onOpenList: () => void }) {
   const create = useTourTarget('create');
   const profile = useTourTarget('profile');
   const settings = useTourTarget('settings', { scrollRef });
-  const { start, isActive } = useTour();
+  const { start, isActive, reset } = useTour();
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -85,6 +87,9 @@ function Home({ onOpenList }: { onOpenList: () => void }) {
           </Pressable>
           <Pressable onPress={onOpenList} style={styles.linkBtn}>
             <Text style={styles.linkText}>Tour a long list →</Text>
+          </Pressable>
+          <Pressable onPress={() => reset('main')} style={styles.linkBtn}>
+            <Text style={styles.linkText}>Reset "show once" (auto-runs on next launch)</Text>
           </Pressable>
         </View>
 
@@ -150,7 +155,13 @@ function Screen() {
 function Root() {
   const insets = useSafeAreaInsets();
   return (
-    <TourProvider tours={tours} insets={insets} colorScheme="dark" allowTargetInteraction>
+    <TourProvider
+      tours={tours}
+      insets={insets}
+      colorScheme="dark"
+      allowTargetInteraction
+      storage={AsyncStorage}
+    >
       <StatusBar barStyle="dark-content" />
       <Screen />
     </TourProvider>
