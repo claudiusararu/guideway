@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Keyboard, useColorScheme, useWindowDimensions } from 'react-native';
+import { Keyboard, Platform, useColorScheme, useWindowDimensions } from 'react-native';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import {
   reducer,
@@ -129,8 +129,12 @@ export function TourProvider({
 
     const reveal = (rect: TargetRect | null) => {
       if (cancelled || !rect) return;
+      // Android draws the overlay edge-to-edge from the screen top, but measureInWindow
+      // reports coordinates relative to below the status bar - add the top inset back.
+      const measured =
+        Platform.OS === 'android' ? { ...rect, y: rect.y + (insets?.top ?? 0) } : rect;
       const cut = { ...resolvedCutout, ...step.cutout };
-      const padded = padRect(rect, cut.padding);
+      const padded = padRect(measured, cut.padding);
       const rad = radiusForShape(cut.shape, padded.width, padded.height, cut.radius);
       setCurrentRect(padded);
 

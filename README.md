@@ -10,7 +10,7 @@ Built for the New Architecture from day one: Fabric-safe measurement, a Reanimat
 spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
 in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
-> Works today on real devices (iOS verified; Android shares the same Fabric-safe paths).
+> Works today on real devices - verified on iOS and Android (edge-to-edge, gesture + button nav).
 > The core is feature-complete; a docs site is next.
 
 MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
