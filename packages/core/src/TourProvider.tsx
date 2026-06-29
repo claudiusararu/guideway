@@ -24,6 +24,7 @@ import type {
   TargetRegistry,
   TooltipComponent,
   Insets,
+  OverlayTapBehavior,
 } from './types';
 
 const DEFAULT_CUTOUT: ResolvedCutout = { shape: 'rounded', padding: 8, radius: 12 };
@@ -39,6 +40,10 @@ export interface TourProviderProps {
   defaultCutout?: Cutout;
   /** Global custom tooltip (step.render takes precedence). */
   tooltipComponent?: TooltipComponent;
+  /** What tapping the dimmed scrim does. Default 'next'. */
+  overlayTapBehavior?: OverlayTapBehavior;
+  /** Let taps reach the highlighted target (the spotlight hole becomes interactive). Default false. */
+  allowTargetInteraction?: boolean;
   /** Safe-area insets so tooltips avoid the notch / home indicator.
    *  Pass `useSafeAreaInsets()` from react-native-safe-area-context. */
   insets?: Insets;
@@ -54,6 +59,8 @@ export function TourProvider({
   colorScheme = 'light',
   defaultCutout,
   tooltipComponent,
+  overlayTapBehavior = 'next',
+  allowTargetInteraction = false,
   insets,
 }: TourProviderProps) {
   const [state, dispatch] = useReducer(reducer, tours, initialState);
@@ -149,10 +156,12 @@ export function TourProvider({
       theme: resolvedTheme,
       defaultCutout: resolvedCutout,
       tooltipComponent,
+      overlayTapBehavior,
+      allowTargetInteraction,
       insets: insets ?? { top: 0, right: 0, bottom: 0, left: 0 },
       screen: { width, height },
     }),
-    [state, controller, currentRect, shared, resolvedTheme, resolvedCutout, tooltipComponent, insets, width, height]
+    [state, controller, currentRect, shared, resolvedTheme, resolvedCutout, tooltipComponent, overlayTapBehavior, allowTargetInteraction, insets, width, height]
   );
 
   return (

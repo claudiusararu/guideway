@@ -64,7 +64,7 @@ function Home() {
 function Root() {
   const insets = useSafeAreaInsets();
   return (
-    <TourProvider tours={tours} insets={insets} colorScheme="dark">
+    <TourProvider tours={tours} insets={insets} colorScheme="dark" allowTargetInteraction>
       <StatusBar barStyle="dark-content" />
       <Home />
     </TourProvider>

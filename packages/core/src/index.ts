@@ -15,6 +15,7 @@ export type {
   Placement,
   PreferredPlacement,
   Insets,
+  OverlayTapBehavior,
 } from './types';
 
 export { lightTheme, darkTheme, resolveTheme } from './theme';

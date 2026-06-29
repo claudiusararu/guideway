@@ -29,6 +29,9 @@ export interface ResolvedCutout {
 export type Placement = 'top' | 'bottom' | 'left' | 'right';
 export type PreferredPlacement = Placement | 'auto';
 
+/** What tapping the dimmed scrim (outside the spotlight) does. */
+export type OverlayTapBehavior = 'next' | 'skip' | 'none';
+
 export interface Insets {
   top: number;
   right: number;

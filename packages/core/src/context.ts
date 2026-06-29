@@ -9,6 +9,7 @@ import type {
   ResolvedCutout,
   TooltipComponent,
   Insets,
+  OverlayTapBehavior,
 } from './types';
 
 export interface SpotlightShared {
@@ -32,6 +33,8 @@ export interface TourContextValue {
   theme: ResolvedTheme;
   defaultCutout: ResolvedCutout;
   tooltipComponent?: TooltipComponent;
+  overlayTapBehavior: OverlayTapBehavior;
+  allowTargetInteraction: boolean;
   insets: Insets;
   screen: { width: number; height: number };
 }
