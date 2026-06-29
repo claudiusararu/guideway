@@ -63,11 +63,18 @@ describe('scrollTargetIntoView', () => {
       },
     }) as unknown as RefObject<View | null>;
 
-  it('centers the target via ScrollView.scrollTo', async () => {
+  it('centers the target via ScrollView.scrollTo (Fabric native ref)', async () => {
     const scrollTo = jest.fn();
-    const scroller = { current: { getScrollableNode: () => 1, scrollTo } } as any;
+    const scroller = { current: { getNativeScrollRef: () => ({}), scrollTo } } as any;
     await scrollTargetIntoView(targetAt(1000, 50), scroller, 800);
     expect(scrollTo).toHaveBeenCalledWith({ y: 625, animated: true }); // 1000 + 25 - 400
+  });
+
+  it('falls back to getScrollableNode on the old architecture', async () => {
+    const scrollTo = jest.fn();
+    const scroller = { current: { getScrollableNode: () => 1, scrollTo } } as any;
+    await scrollTargetIntoView(targetAt(500, 100), scroller, 800);
+    expect(scrollTo).toHaveBeenCalledWith({ y: 150, animated: true }); // 500 + 50 - 400
   });
 
   it('uses scrollToOffset for a FlatList', async () => {

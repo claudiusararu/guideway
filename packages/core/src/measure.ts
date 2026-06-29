@@ -68,11 +68,17 @@ export function scrollTargetIntoView(
       resolve();
       return;
     }
-    const node =
-      typeof scroller.getScrollableNode === 'function' ? scroller.getScrollableNode() : scroller;
+    // Fabric's measureLayout needs a ref to a native component, not a numeric node handle,
+    // so prefer getNativeScrollRef(); fall back to getScrollableNode() on the old architecture.
+    const relativeTo =
+      typeof scroller.getNativeScrollRef === 'function'
+        ? scroller.getNativeScrollRef()
+        : typeof scroller.getScrollableNode === 'function'
+          ? scroller.getScrollableNode()
+          : scroller;
     const done = () => resolve();
     target.measureLayout(
-      node,
+      relativeTo,
       (_x: number, top: number, _w: number, height: number) => {
         const y = resolveScrollOffset({
           targetTop: top,
