@@ -1,5 +1,14 @@
-import React, { useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  FlatList,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TourProvider, useTour, useTourTarget, type TourDefinition } from 'guideway';
 
@@ -28,9 +37,22 @@ const tours: TourDefinition[] = [
       },
     ],
   },
+  {
+    id: 'list',
+    steps: [
+      {
+        id: 'deep-row',
+        title: 'Deep in a list',
+        body: 'Item 30 was virtualized off-screen - scrollToIndex brought it into view.',
+        cutout: { shape: 'rounded' },
+      },
+    ],
+  },
 ];
 
-function Home() {
+const ROW_HEIGHT = 56;
+
+function Home({ onOpenList }: { onOpenList: () => void }) {
   const scrollRef = useRef<ScrollView>(null);
   const search = useTourTarget('search', { scrollRef });
   const create = useTourTarget('create');
@@ -61,6 +83,9 @@ function Home() {
           <Pressable onPress={() => start('main')} style={styles.cta} disabled={isActive}>
             <Text style={styles.ctaText}>{isActive ? 'Tour running' : 'Show me around'}</Text>
           </Pressable>
+          <Pressable onPress={onOpenList} style={styles.linkBtn}>
+            <Text style={styles.linkText}>Tour a long list →</Text>
+          </Pressable>
         </View>
 
         <View style={styles.spacer}>
@@ -80,12 +105,54 @@ function Home() {
   );
 }
 
+function ListDemo({ onBack }: { onBack: () => void }) {
+  const listRef = useRef<FlatList<number>>(null);
+  const deepRow = useTourTarget('deep-row', { scrollRef: listRef, index: 29 });
+  const { start, isActive } = useTour();
+  const data = Array.from({ length: 50 }, (_, i) => i);
+
+  return (
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.header}>
+        <Pressable onPress={onBack} hitSlop={8}>
+          <Text style={styles.brand}>← Back</Text>
+        </Pressable>
+        <Pressable onPress={() => start('list')} disabled={isActive} style={styles.cta}>
+          <Text style={styles.ctaText}>{isActive ? 'Touring' : 'Tour the list'}</Text>
+        </Pressable>
+      </View>
+
+      <FlatList
+        ref={listRef}
+        data={data}
+        keyExtractor={(item) => String(item)}
+        contentContainerStyle={styles.listContent}
+        getItemLayout={(_, index) => ({ length: ROW_HEIGHT, offset: ROW_HEIGHT * index, index })}
+        renderItem={({ item, index }) => (
+          <View ref={index === 29 ? deepRow : undefined} style={styles.row}>
+            <Text style={styles.rowText}>Item {item + 1}</Text>
+          </View>
+        )}
+      />
+    </SafeAreaView>
+  );
+}
+
+function Screen() {
+  const [showList, setShowList] = useState(false);
+  return showList ? (
+    <ListDemo onBack={() => setShowList(false)} />
+  ) : (
+    <Home onOpenList={() => setShowList(true)} />
+  );
+}
+
 function Root() {
   const insets = useSafeAreaInsets();
   return (
     <TourProvider tours={tours} insets={insets} colorScheme="dark" allowTargetInteraction>
       <StatusBar barStyle="dark-content" />
-      <Home />
+      <Screen />
     </TourProvider>
   );
 }
@@ -141,6 +208,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   ctaText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  linkBtn: { marginTop: 4 },
+  linkText: { color: '#2347ff', fontSize: 15, fontWeight: '700' },
   spacer: { height: 620, alignItems: 'center', justifyContent: 'center' },
   spacerHint: { color: '#aeb4c0', fontSize: 14, fontWeight: '600' },
   settingsCard: {
@@ -153,6 +222,16 @@ const styles = StyleSheet.create({
   },
   settingsTitle: { fontSize: 20, fontWeight: '800', color: '#0b0d12', marginBottom: 6 },
   settingsBody: { fontSize: 15, color: '#3a4051' },
+  listContent: { paddingBottom: 40 },
+  row: {
+    height: ROW_HEIGHT,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eef0f4',
+    backgroundColor: '#fff',
+  },
+  rowText: { fontSize: 16, color: '#0b0d12' },
   fab: {
     position: 'absolute',
     right: 24,

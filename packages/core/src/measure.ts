@@ -58,13 +58,33 @@ export function scrollTargetIntoView(
   targetRef: RefObject<View | null>,
   scrollRef: RefObject<ScrollView | FlatList<unknown> | null>,
   viewportHeight: number,
-  align: ScrollAlign = 'center'
+  options: { index?: number; align?: ScrollAlign } = {}
 ): Promise<void> {
   return new Promise((resolve) => {
-    // RN ref methods (measureLayout/getScrollableNode/scrollTo) aren't on the static types.
+    // RN ref methods (measureLayout/getNativeScrollRef/scrollTo/scrollToIndex) aren't typed.
     const scroller = scrollRef.current as any;
+    if (!scroller) {
+      resolve();
+      return;
+    }
+    const { index, align = 'center' } = options;
+
+    // Virtualized list with a known index: let the list scroll to the item. The item may not
+    // be rendered yet (so it can't be measured) - FlatList resolves the layout internally.
+    if (index != null && typeof scroller.scrollToIndex === 'function') {
+      try {
+        scroller.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+      } catch {
+        // scrollToIndex can throw for a far item without getItemLayout; ignore and let the
+        // post-scroll measure read wherever the list landed.
+      }
+      resolve();
+      return;
+    }
+
+    // ScrollView / already-rendered path: measure the target within the content, scroll there.
     const target = targetRef.current as any;
-    if (!scroller || !target || typeof target.measureLayout !== 'function') {
+    if (!target || typeof target.measureLayout !== 'function') {
       resolve();
       return;
     }

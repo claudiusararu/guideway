@@ -124,9 +124,10 @@ export function TourProvider({
     };
 
     let timer: ReturnType<typeof setTimeout> | undefined;
-    if (entry?.scrollRef?.current && entry.ref.current) {
-      // Off-screen target: scroll it into view, then measure once the scroll settles.
-      scrollTargetIntoView(entry.ref, entry.scrollRef, height).then(() => {
+    if (entry?.scrollRef?.current && (entry.ref.current || entry.index != null)) {
+      // Off-screen target (rendered or virtualized): scroll it into view, then measure
+      // once the scroll settles.
+      scrollTargetIntoView(entry.ref, entry.scrollRef, height, { index: entry.index }).then(() => {
         timer = setTimeout(() => {
           if (!cancelled) measureTarget(entry.ref).then(reveal);
         }, SCROLL_SETTLE);

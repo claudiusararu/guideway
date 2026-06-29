@@ -84,6 +84,27 @@ describe('scrollTargetIntoView', () => {
     expect(scrollToOffset).toHaveBeenCalledWith({ offset: 625, animated: true });
   });
 
+  it('scrolls a FlatList to a virtualized item by index', async () => {
+    const scrollToIndex = jest.fn();
+    const scroller = { current: { scrollToIndex } } as any;
+    // target ref is null (item not rendered yet) - the index drives the scroll
+    await scrollTargetIntoView({ current: null }, scroller, 800, { index: 24 });
+    expect(scrollToIndex).toHaveBeenCalledWith({ index: 24, viewPosition: 0.5, animated: true });
+  });
+
+  it('resolves if scrollToIndex throws (far item without getItemLayout)', async () => {
+    const scroller = {
+      current: {
+        scrollToIndex: () => {
+          throw new Error('scrollToIndex out of range');
+        },
+      },
+    } as any;
+    await expect(
+      scrollTargetIntoView({ current: null }, scroller, 800, { index: 99 })
+    ).resolves.toBeUndefined();
+  });
+
   it('resolves without scrolling when the refs are empty', async () => {
     await expect(
       scrollTargetIntoView({ current: null }, { current: null } as any, 800)
