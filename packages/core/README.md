@@ -11,6 +11,7 @@ Fabric-first, Reanimated-powered, hook-first, TypeScript-first.
 - **Theming** - built-in light/dark + `colorScheme` + tokens, or a custom tooltip
 - **Interactive spotlight** - tap through to the real element; keyboard-aware
 - **Auto-scroll** - brings off-screen targets into view (ScrollView + FlatList)
+- **Persistence** - `showOnce` tours auto-fire once via a pluggable storage adapter (AsyncStorage/MMKV)
 - Hook-first, no HOCs, tours are plain data
 
 ## Install

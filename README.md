@@ -11,7 +11,7 @@ spotlight that animates on the UI thread, a hook-first API, and zero native conf
 in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
 
 > Works today on real devices (iOS verified; Android shares the same Fabric-safe paths).
-> Persistence (show-once tours) and a docs site are next.
+> The core is feature-complete; a docs site is next.
 
 MIT licensed and free. A paid Onboarding Kit (pre-built flow recipes + styled screens) will
 live separately.
@@ -23,6 +23,7 @@ live separately.
 - **Theming** - built-in light/dark themes, a `colorScheme` prop (`light`/`dark`/`auto`), and tokens for colors, radius, fonts, and button labels - or replace the tooltip entirely.
 - **Interactive spotlight** - tap straight through the hole to use the real element (`allowTargetInteraction`), configurable scrim taps, and the keyboard dismisses on every step.
 - **Auto-scroll** - off-screen targets scroll into view before highlighting, in `ScrollView` and `FlatList` (virtualized rows via `scrollToIndex`).
+- **Persistence** - `showOnce` tours auto-fire once and never nag again, via a pluggable storage adapter (AsyncStorage, MMKV, anything with `getItem`/`setItem`); `reset()` re-arms one.
 - **Hook-first** - no HOCs, no wrapper views that shift your layout. Tours are plain data, so remote-config and A/B-tested onboarding come for free.
 - **New-Architecture native** - Fabric-safe measurement, zero native config, runs in Expo Go.
 
@@ -95,6 +96,11 @@ const row = useTourTarget('row', { scrollRef: listRef, index: 29 });
 
 // Restyle anything
 <TourProvider tours={tours} theme={{ accent: '#ff5a5f', tooltip: { borderRadius: 20 } }} />
+
+// Show a tour once, ever - persisted across launches (AsyncStorage / MMKV / ...)
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const onceTours = [{ id: 'welcome', showOnce: true, steps: [/* ... */] }];
+<TourProvider tours={onceTours} storage={AsyncStorage} />; // auto-fires once; reset('welcome') re-arms
 ```
 
 See [`apps/example`](./apps/example) for a working demo of every feature - theming, the
