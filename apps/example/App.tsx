@@ -31,10 +31,10 @@ const tours: TourDefinition[] = [
 ];
 
 function Home() {
-  const search = useTourTarget('search');
+  const scrollRef = useRef<ScrollView>(null);
+  const search = useTourTarget('search', { scrollRef });
   const create = useTourTarget('create');
   const profile = useTourTarget('profile');
-  const scrollRef = useRef<ScrollView>(null);
   const settings = useTourTarget('settings', { scrollRef });
   const { start, isActive } = useTour();
 

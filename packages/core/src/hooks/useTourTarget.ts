@@ -10,7 +10,8 @@ import type { UseTourTargetOptions } from '../types';
  *   const ref = useTourTarget('search');
  *   return <TextInput ref={ref} ... />;
  *
- * scrollRef / index are accepted now and wired for auto-scroll in a later release.
+ * Pass `scrollRef` when the target lives in a ScrollView/FlatList: the tour scrolls it
+ * into view before highlighting (in either direction). Every in-scroll target needs it.
  */
 export function useTourTarget(
   id: string,
