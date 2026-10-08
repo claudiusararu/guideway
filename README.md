@@ -12,7 +12,8 @@
 
 Built for the New Architecture from day one: Fabric-safe measurement, a Reanimated
 spotlight that animates on the UI thread, a hook-first API, and zero native config (it runs
-in Expo Go). The incumbents broke when Fabric became mandatory. This one is built for it.
+in Expo Go). The established tour libraries were written before Fabric became the default and
+still have open New Architecture issues. This one is built for it.
 
 > Works today on real devices - verified on iOS and Android (edge-to-edge, gesture + button nav).
 > The core is feature-complete, with full docs and a live demo at [guideway.dev](https://guideway.dev).
@@ -125,6 +126,11 @@ pnpm typecheck
 # run the demo (aligns Expo/RN/Reanimated versions to the SDK first)
 cd apps/example && npx expo install --fix && npx expo start
 ```
+
+## Contributing
+
+Bug reports and pull requests are welcome. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for
+setup, tests, and what to check before opening a PR.
 
 ## License
 
