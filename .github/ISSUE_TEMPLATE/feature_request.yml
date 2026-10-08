@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest an idea or an API change for Guideway.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the onboarding flow or use case. "I want X so that my users can Y."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like Guideway to do?
+      description: A sketch of the API is welcome (a prop, a hook option, a step field).
+      render: tsx
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have tried
+      description: Workarounds, or how other libraries handle it.
